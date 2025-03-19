@@ -15,7 +15,15 @@ interface ModelCardProps {
   fullSize?: boolean; // Propriété optionnelle pour afficher en grand format
 }
 
-const ModelCard = ({ title, description, features, demoUrl, index, fullSize = false }: ModelCardProps) => {
+const ModelCard = ({ 
+  title, 
+  // Retirer de la déstructuration les props non utilisées
+  // description, 
+  // features, 
+  demoUrl, 
+  index, 
+  fullSize = false 
+}: ModelCardProps) => {
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: false, amount: 0.3 });
   const [isExpanded, setIsExpanded] = useState(false);
@@ -51,7 +59,7 @@ const ModelCard = ({ title, description, features, demoUrl, index, fullSize = fa
   return (
     <motion.div
       ref={cardRef}
-      className={`relative w-full ${isExpanded ? 'fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4' : fullSize ? 'h-[800px]' : 'h-[600px]'}`}
+      className={`relative w-full ${isExpanded ? 'fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4' : fullSize ? 'h-full' : 'h-[550px]'}`}
       variants={cardVariants}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
@@ -63,7 +71,7 @@ const ModelCard = ({ title, description, features, demoUrl, index, fullSize = fa
       }}
     >
       <motion.div
-        className={`relative overflow-hidden rounded-xl ${isExpanded ? 'w-[95vw] h-[90vh] max-w-7xl mx-auto' : 'h-full w-full flex flex-col'}`}
+        className={`relative overflow-hidden rounded-xl ${isExpanded ? 'w-[90vw] h-[85vh] max-w-6xl mx-auto' : 'h-full w-full'}`}
         style={{
           boxShadow: isExpanded ? '0 20px 60px rgba(0,0,0,0.5)' : '0 10px 30px rgba(0,0,0,0.3)'
         }}
@@ -75,8 +83,8 @@ const ModelCard = ({ title, description, features, demoUrl, index, fullSize = fa
           transition: { duration: 0.3 }
         }}
       >
-        {/* Prévisualisation du site (occupe la majorité de la carte) */}
-        <div className={`${isExpanded ? 'w-full h-full' : fullSize ? 'h-[85%] w-full' : 'h-[75%] w-full'}`}>
+        {/* Prévisualisation du site (occupe toute la carte) */}
+        <div className="w-full h-full">
           <div className="relative w-full h-full">
             {/* Bouton d'expansion en haut à droite */}
             <motion.button
@@ -96,45 +104,6 @@ const ModelCard = ({ title, description, features, demoUrl, index, fullSize = fa
             />
           </div>
         </div>
-        
-        {/* Informations en bas (visible uniquement quand non agrandi) */}
-        {!isExpanded && (
-          <motion.div 
-            className={`p-4 bg-black/90 z-20 ${fullSize ? 'h-[15%]' : 'h-[25%]'} flex flex-col justify-between`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <div>
-              <h3 className="text-xl font-light text-white mb-1">{title}</h3>
-              <p className="text-white/60 text-xs mb-2">{description}</p>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <motion.a 
-                href={demoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-1.5 rounded-md bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs hover:from-blue-600 hover:to-purple-600 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Voir démo
-              </motion.a>
-              
-              <div className="flex space-x-1">
-                {features.slice(0, 2).map((feature, i) => (
-                  <span 
-                    key={i}
-                    className="text-[10px] px-2 py-1 rounded-full bg-white/10 text-white/70"
-                  >
-                    {feature}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
       </motion.div>
       
       {/* Instructions quand agrandi */}

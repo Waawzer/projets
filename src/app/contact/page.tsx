@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 const models = [
   { id: 'studio-enregistrement', name: 'Studio d\'Enregistrement' },
@@ -256,8 +255,6 @@ export default function Contact() {
           </motion.div>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 } 

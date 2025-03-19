@@ -47,19 +47,102 @@ const WhyUsSection = () => {
   const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
   const opacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
   
+  // Animation de l'arrière-plan
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  
+  // Animation des particules pour effet "Apple"
+  const particleCount = 30;
+  const particles = Array.from({ length: particleCount }).map((_, i) => ({
+    id: i,
+    size: Math.random() * 3 + 1,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    opacity: Math.random() * 0.5 + 0.1,
+    speed: Math.random() * 0.8 + 0.2
+  }));
+  
   return (
-    <section 
+    <div 
       ref={sectionRef}
-      id="pourquoi-nous" 
-      className="relative min-h-screen py-20 overflow-hidden flex flex-col items-center"
+      className="w-full h-full flex items-center justify-center relative overflow-hidden"
     >
-      {/* Background */}
-      <div className="absolute inset-0 bg-black z-0">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent"></div>
-          <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent"></div>
-        </div>
-      </div>
+      {/* Arrière-plan avec effet de parallaxe */}
+      <motion.div 
+        className="absolute inset-0 z-0"
+        style={{ 
+          backgroundImage: 'radial-gradient(circle at center, rgba(25,25,80,0.5) 0%, rgba(10,10,30,0.8) 50%, rgba(0,0,0,1) 100%)',
+          y: bgY,
+          scale: bgScale
+        }}
+      />
+      
+      {/* Grille décorative animée */}
+      <motion.div 
+        className="absolute inset-0 z-1"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.2, 0.1]),
+          y: useTransform(scrollYProgress, [0, 1], [0, -50])
+        }}
+      />
+      
+      {/* Particules flottantes style Apple */}
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="absolute rounded-full bg-white"
+          style={{
+            width: particle.size,
+            height: particle.size,
+            left: `${particle.x}%`,
+            top: `${particle.y}%`,
+            opacity: particle.opacity,
+            zIndex: 1,
+            filter: 'blur(1px)',
+          }}
+          animate={{
+            y: [0, -100 * particle.speed],
+            opacity: [particle.opacity, 0],
+          }}
+          transition={{
+            duration: 10 + Math.random() * 20,
+            repeat: Infinity,
+            ease: "linear",
+            delay: Math.random() * 5,
+          }}
+        />
+      ))}
+      
+      {/* Formes flottantes */}
+      <motion.div
+        className="absolute w-64 h-64 rounded-full"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(80, 80, 255, 0.2) 0%, transparent 70%)',
+          left: '10%',
+          top: '30%',
+          filter: 'blur(40px)',
+          opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.4, 0.2]),
+          x: useTransform(scrollYProgress, [0, 1], [-50, 0]),
+          y: useTransform(scrollYProgress, [0, 1], [50, -50]),
+          zIndex: 1
+        }}
+      />
+      
+      <motion.div
+        className="absolute w-80 h-80 rounded-full"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(255, 80, 180, 0.2) 0%, transparent 70%)',
+          right: '10%',
+          bottom: '20%',
+          filter: 'blur(50px)',
+          opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.3, 0.1]),
+          x: useTransform(scrollYProgress, [0, 1], [50, 0]),
+          y: useTransform(scrollYProgress, [0, 1], [50, -50]),
+          zIndex: 1
+        }}
+      />
       
       <motion.div 
         className="container mx-auto px-6 relative z-10"
@@ -141,7 +224,7 @@ const WhyUsSection = () => {
           </motion.a>
         </motion.div>
       </motion.div>
-    </section>
+    </div>
   );
 };
 

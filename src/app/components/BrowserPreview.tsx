@@ -10,7 +10,7 @@ interface BrowserPreviewProps {
   maxScale?: number;
 }
 
-const BrowserPreview = ({ url, title, initialScale = 0.8, maxScale = 1 }: BrowserPreviewProps) => {
+const BrowserPreview = ({ url, title, initialScale = 0.7, maxScale = 0.9 }: BrowserPreviewProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);

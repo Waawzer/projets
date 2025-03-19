@@ -10,6 +10,7 @@
   --glow-secondary: rgba(109, 40, 217, 0.5);
   --card-bg: rgba(23, 23, 23, 0.8);
   --card-hover-bg: rgba(32, 32, 32, 0.9);
+  --scroll-behavior: smooth;
 }
 
 @theme inline {
@@ -19,11 +20,18 @@
   --font-heading: var(--font-montserrat);
 }
 
+html, body {
+  scroll-behavior: smooth;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -63,6 +71,65 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-5px);
 }
 
+/* Styles pour le fullpage scroll */
+.fullpage-container {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.fullpage-sections {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.fullpage-section {
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  transition: opacity 0.8s ease;
+}
+
+/* Styles pour les points de navigation */
+.nav-dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.nav-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-dot.active {
+  background-color: white;
+  transform: scale(1.2);
+}
+
+.nav-dot:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -81,4 +148,16 @@ h1, h2, h3, h4, h5, h6 {
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+/* Animation du point actif */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.nav-dot.active {
+  animation: pulse 2s infinite;
+  background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
 }

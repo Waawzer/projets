@@ -10,7 +10,6 @@ const Hero = () => {
   const mouseY = useMotionValue(0);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const words = ["Remis au goût du jour", "Avec un design élégant", "Pour une image professionnelle", "A prix abordable"];
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [isMounted, setIsMounted] = useState(false);
   
   const { scrollYProgress } = useScroll({
@@ -21,19 +20,28 @@ const Hero = () => {
   const y = useTransform(scrollYProgress, [0, 1], [0, 300]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   
+  // Animation de l'arrière-plan
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  
   const springConfig = { stiffness: 100, damping: 30 };
   const springY = useSpring(y, springConfig);
   const springOpacity = useSpring(opacity, springConfig);
   
+  // Animation des particules pour effet "Apple"
+  const particleCount = 30;
+  const particles = Array.from({ length: particleCount }).map((_, i) => ({
+    id: i,
+    size: Math.random() * 3 + 1,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    opacity: Math.random() * 0.5 + 0.1,
+    speed: Math.random() * 0.8 + 0.2
+  }));
+  
   // Set isMounted to true on client-side
   useEffect(() => {
     setIsMounted(true);
-    if (typeof window !== 'undefined') {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-    }
   }, []);
   
   useEffect(() => {
@@ -45,19 +53,10 @@ const Hero = () => {
       mouseY.set(clientY);
     };
     
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-    };
-    
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('resize', handleResize);
     
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
     };
   }, [mouseX, mouseY, isMounted]);
   
@@ -72,46 +71,87 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, [words.length, isMounted]);
   
-  const glowX = useTransform(mouseX, (val) => (val - (windowSize.width / 2)) * 0.05);
-  const glowY = useTransform(mouseY, (val) => (val - (windowSize.height / 2)) * 0.05);
-
   return (
-    <section 
+    <div 
       ref={containerRef}
-      className="relative h-screen flex items-center justify-center overflow-hidden"
+      className="w-full h-full flex items-center justify-center relative overflow-hidden"
     >
-      {/* Animated background */}
+      {/* Arrière-plan avec effet de parallaxe */}
       <motion.div 
         className="absolute inset-0 z-0"
         style={{ 
-          background: 'radial-gradient(circle at center, rgba(10,10,40,0.8) 0%, rgba(0,0,0,1) 70%)',
-          x: glowX,
-          y: glowY
+          backgroundImage: 'radial-gradient(circle at center, rgba(25,25,80,0.5) 0%, rgba(10,10,30,0.8) 50%, rgba(0,0,0,1) 100%)',
+          y: bgY,
+          scale: bgScale
         }}
       />
       
-      {/* Floating particles - only render on client-side */}
-      {isMounted && Array.from({ length: 20 }).map((_, i) => (
+      {/* Grille décorative animée */}
+      <motion.div 
+        className="absolute inset-0 z-1"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.2, 0.1]),
+          y: useTransform(scrollYProgress, [0, 1], [0, -50])
+        }}
+      />
+      
+      {/* Particules flottantes style Apple */}
+      {particles.map((particle) => (
         <motion.div
-          key={i}
-          className="absolute w-1 h-1 rounded-full bg-white/30"
-          initial={{ 
-            x: Math.random() * windowSize.width, 
-            y: Math.random() * windowSize.height,
-            scale: Math.random() * 3
+          key={particle.id}
+          className="absolute rounded-full bg-white"
+          style={{
+            width: particle.size,
+            height: particle.size,
+            left: `${particle.x}%`,
+            top: `${particle.y}%`,
+            opacity: particle.opacity,
+            zIndex: 1,
+            filter: 'blur(1px)',
           }}
-          animate={{ 
-            x: [null, Math.random() * windowSize.width],
-            y: [null, Math.random() * windowSize.height],
+          animate={{
+            y: [0, -100 * particle.speed],
+            opacity: [particle.opacity, 0],
           }}
-          transition={{ 
+          transition={{
             duration: 10 + Math.random() * 20,
             repeat: Infinity,
-            repeatType: "reverse"
+            ease: "linear",
+            delay: Math.random() * 5,
           }}
-          style={{ opacity: 0.1 + Math.random() * 0.3 }}
         />
       ))}
+      
+      {/* Formes flottantes */}
+      <motion.div
+        className="absolute w-64 h-64 rounded-full"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(80, 80, 255, 0.2) 0%, transparent 70%)',
+          left: '10%',
+          top: '30%',
+          filter: 'blur(40px)',
+          opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.4, 0.2]),
+          x: useTransform(scrollYProgress, [0, 1], [-50, 0]),
+          y: useTransform(scrollYProgress, [0, 1], [50, -50]),
+          zIndex: 1
+        }}
+      />
+      
+      <motion.div
+        className="absolute w-80 h-80 rounded-full"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(255, 80, 180, 0.2) 0%, transparent 70%)',
+          right: '10%',
+          bottom: '20%',
+          filter: 'blur(50px)',
+          opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.3, 0.1]),
+          x: useTransform(scrollYProgress, [0, 1], [50, 0]),
+          y: useTransform(scrollYProgress, [0, 1], [50, -50]),
+          zIndex: 1
+        }}
+      />
       
       {/* Main content */}
       <motion.div
@@ -190,7 +230,7 @@ const Hero = () => {
           />
         </div>
       </motion.div>
-    </section>
+    </div>
   );
 };
 

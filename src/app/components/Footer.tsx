@@ -1,14 +1,100 @@
 'use client';
 
+import { useRef } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const sectionRef = useRef(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+  
+  // Animation de l'arrière-plan
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  
+  // Animation des particules pour effet "Apple"
+  const particleCount = 20;
+  const particles = Array.from({ length: particleCount }).map((_, i) => ({
+    id: i,
+    size: Math.random() * 3 + 1,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    opacity: Math.random() * 0.3 + 0.1,
+    speed: Math.random() * 0.8 + 0.2
+  }));
 
   return (
-    <footer className="relative py-8 overflow-hidden">
-      <div className="absolute inset-0 bg-black z-0"></div>
+    <div 
+      ref={sectionRef}
+      className="w-full h-full flex items-center justify-center relative overflow-hidden"
+    >
+      {/* Arrière-plan avec effet de parallaxe */}
+      <motion.div 
+        className="absolute inset-0 z-0"
+        style={{ 
+          backgroundImage: 'radial-gradient(circle at center, rgba(25,25,80,0.5) 0%, rgba(10,10,30,0.8) 50%, rgba(0,0,0,1) 100%)',
+          y: bgY,
+          scale: bgScale
+        }}
+      />
+      
+      {/* Grille décorative animée */}
+      <motion.div 
+        className="absolute inset-0 z-1"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.2, 0.1]),
+          y: useTransform(scrollYProgress, [0, 1], [0, -50])
+        }}
+      />
+      
+      {/* Particules flottantes style Apple */}
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="absolute rounded-full bg-white"
+          style={{
+            width: particle.size,
+            height: particle.size,
+            left: `${particle.x}%`,
+            top: `${particle.y}%`,
+            opacity: particle.opacity,
+            zIndex: 1,
+            filter: 'blur(1px)',
+          }}
+          animate={{
+            y: [0, -100 * particle.speed],
+            opacity: [particle.opacity, 0],
+          }}
+          transition={{
+            duration: 10 + Math.random() * 20,
+            repeat: Infinity,
+            ease: "linear",
+            delay: Math.random() * 5,
+          }}
+        />
+      ))}
+      
+      {/* Formes flottantes */}
+      <motion.div
+        className="absolute w-64 h-64 rounded-full"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(80, 80, 255, 0.2) 0%, transparent 70%)',
+          left: '5%',
+          top: '30%',
+          filter: 'blur(40px)',
+          opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.3, 0.1]),
+          x: useTransform(scrollYProgress, [0, 1], [-30, 0]),
+          y: useTransform(scrollYProgress, [0, 1], [30, -30]),
+          zIndex: 1
+        }}
+      />
       
       <div className="container mx-auto px-6 relative z-10">
         <div className="flex flex-col items-center">
@@ -45,7 +131,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
+    </div>
   );
 };
 

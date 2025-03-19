@@ -32,13 +32,16 @@ const Header = () => {
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/">
             <motion.div
-              className="text-xl font-bold"
+              className="text-xl font-bold flex flex-col"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.2 }}
             >
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
-                WM
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:translate-x-4 transition-transform">
+                Anthracite
+              </span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 translate-x-2 hover:translate-x-5 transition-transform">
+                Applications
               </span>
             </motion.div>
           </Link>
