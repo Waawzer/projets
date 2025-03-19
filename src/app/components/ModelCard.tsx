@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
-import Link from 'next/link';
+import { motion, useInView } from 'framer-motion';
 import BrowserPreview from './BrowserPreview';
 
 interface ModelCardProps {
@@ -17,7 +15,7 @@ interface ModelCardProps {
   fullSize?: boolean; // Propriété optionnelle pour afficher en grand format
 }
 
-const ModelCard = ({ id, title, description, features, imageSrc, demoUrl, index, fullSize = false }: ModelCardProps) => {
+const ModelCard = ({ title, description, features, demoUrl, index, fullSize = false }: ModelCardProps) => {
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: false, amount: 0.3 });
   const [isExpanded, setIsExpanded] = useState(false);

@@ -61,7 +61,7 @@ const models = [
   }
 ];
 
-// Éléments décoratifs pour l'effet parallaxe
+// Éléments décoratifs pour l'effet parallaxe - limiting to 6 for simplicity
 const parallaxElements = [
   { size: 80, x: '10%', y: '20%', opacity: 0.05, speed: 0.5 },
   { size: 120, x: '85%', y: '15%', opacity: 0.07, speed: 0.7 },
@@ -84,10 +84,16 @@ const ModelsSection = () => {
   const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   
-  // Transformations pour les éléments parallaxe
-  const getParallaxY = (speed: number) => {
-    return useTransform(scrollYProgress, [0, 1], [0, -200 * speed]);
-  };
+  // Create individual parallax transforms
+  const parallaxY0 = useTransform(scrollYProgress, [0, 1], [0, -200 * parallaxElements[0].speed]);
+  const parallaxY1 = useTransform(scrollYProgress, [0, 1], [0, -200 * parallaxElements[1].speed]);
+  const parallaxY2 = useTransform(scrollYProgress, [0, 1], [0, -200 * parallaxElements[2].speed]);
+  const parallaxY3 = useTransform(scrollYProgress, [0, 1], [0, -200 * parallaxElements[3].speed]);
+  const parallaxY4 = useTransform(scrollYProgress, [0, 1], [0, -200 * parallaxElements[4].speed]);
+  const parallaxY5 = useTransform(scrollYProgress, [0, 1], [0, -200 * parallaxElements[5].speed]);
+  
+  // Collection of parallax values
+  const parallaxYValues = [parallaxY0, parallaxY1, parallaxY2, parallaxY3, parallaxY4, parallaxY5];
   
   return (
     <section 
@@ -116,7 +122,7 @@ const ModelsSection = () => {
             top: el.y,
             background: 'radial-gradient(circle at center, rgba(100, 100, 255, 0.3) 0%, transparent 70%)',
             opacity: el.opacity,
-            y: getParallaxY(el.speed),
+            y: parallaxYValues[index],
             filter: 'blur(8px)',
             zIndex: 1
           }}
