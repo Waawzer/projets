@@ -10,6 +10,8 @@ const Hero = () => {
   const mouseY = useMotionValue(0);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const words = ["Remis au goût du jour", "Avec un design élégant", "Pour une image professionnelle", "A prix abordable"];
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [isMounted, setIsMounted] = useState(false);
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -23,28 +25,55 @@ const Hero = () => {
   const springY = useSpring(y, springConfig);
   const springOpacity = useSpring(opacity, springConfig);
   
+  // Set isMounted to true on client-side
   useEffect(() => {
+    setIsMounted(true);
+    if (typeof window !== 'undefined') {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    }
+  }, []);
+  
+  useEffect(() => {
+    if (!isMounted) return;
+    
     const handleMouseMove = (e: MouseEvent) => {
       const { clientX, clientY } = e;
       mouseX.set(clientX);
       mouseY.set(clientY);
     };
     
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+    
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [mouseX, mouseY, isMounted]);
   
   // Effet de défilement des mots avec fondu
   useEffect(() => {
+    if (!isMounted) return;
+    
     const interval = setInterval(() => {
       setCurrentWordIndex((prevIndex) => (prevIndex + 1) % words.length);
     }, 3000);
     
     return () => clearInterval(interval);
-  }, [words.length]);
+  }, [words.length, isMounted]);
   
-  const glowX = useTransform(mouseX, (val) => (val - window.innerWidth / 2) * 0.05);
-  const glowY = useTransform(mouseY, (val) => (val - window.innerHeight / 2) * 0.05);
+  const glowX = useTransform(mouseX, (val) => (val - (windowSize.width / 2)) * 0.05);
+  const glowY = useTransform(mouseY, (val) => (val - (windowSize.height / 2)) * 0.05);
 
   return (
     <section 
@@ -61,19 +90,19 @@ const Hero = () => {
         }}
       />
       
-      {/* Floating particles */}
-      {Array.from({ length: 20 }).map((_, i) => (
+      {/* Floating particles - only render on client-side */}
+      {isMounted && Array.from({ length: 20 }).map((_, i) => (
         <motion.div
           key={i}
           className="absolute w-1 h-1 rounded-full bg-white/30"
           initial={{ 
-            x: Math.random() * window.innerWidth, 
-            y: Math.random() * window.innerHeight,
+            x: Math.random() * windowSize.width, 
+            y: Math.random() * windowSize.height,
             scale: Math.random() * 3
           }}
           animate={{ 
-            x: [null, Math.random() * window.innerWidth],
-            y: [null, Math.random() * window.innerHeight],
+            x: [null, Math.random() * windowSize.width],
+            y: [null, Math.random() * windowSize.height],
           }}
           transition={{ 
             duration: 10 + Math.random() * 20,

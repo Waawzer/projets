@@ -13,6 +13,7 @@ interface BrowserPreviewProps {
 const BrowserPreview = ({ url, title, initialScale = 0.8, maxScale = 1 }: BrowserPreviewProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -23,6 +24,11 @@ const BrowserPreview = ({ url, title, initialScale = 0.8, maxScale = 1 }: Browse
     [initialScale, maxScale], 
     ['0 10px 30px rgba(0,0,0,0.3)', '0 20px 60px rgba(0,0,0,0.5)']
   );
+  
+  // Set isMounted to true once component is mounted
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   
   // Handle iframe load event
   const handleIframeLoad = () => {
@@ -37,6 +43,8 @@ const BrowserPreview = ({ url, title, initialScale = 0.8, maxScale = 1 }: Browse
   
   // Handle escape key to collapse
   useEffect(() => {
+    if (!isMounted) return;
+    
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isExpanded) {
         setIsExpanded(false);
@@ -46,7 +54,7 @@ const BrowserPreview = ({ url, title, initialScale = 0.8, maxScale = 1 }: Browse
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isExpanded, initialScale, scale]);
+  }, [isExpanded, initialScale, scale, isMounted]);
 
   // Fonction sécurisée pour naviguer en arrière
   const goBack = () => {
