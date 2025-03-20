@@ -1,0 +1,123 @@
+/* Responsive CSS */
+
+/* Variables responsives */
+:root {
+  --header-height-mobile: 60px;
+  --header-height-desktop: 80px;
+  --section-padding-mobile: 1rem;
+  --section-padding-tablet: 2rem;
+  --section-padding-desktop: 4rem;
+}
+
+/* Styles de base pour la navigation responsive */
+.nav-dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Responsive pour les nav dots */
+@media (max-width: 640px) {
+  .nav-dots {
+    right: 10px;
+    gap: 12px;
+  }
+
+  .nav-dot {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* Masquer les nav dots en mode paysage sur mobile */
+@media (max-height: 500px) and (max-width: 768px) {
+  .nav-dots {
+    display: none;
+  }
+}
+
+/* Ajustements pour la hauteur des sections sur les appareils mobiles */
+@media (max-width: 640px) {
+  .fullpage-section {
+    height: 100%;
+    padding: var(--section-padding-mobile);
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .fullpage-section {
+    padding: var(--section-padding-tablet);
+  }
+}
+
+@media (min-width: 1025px) {
+  .fullpage-section {
+    padding: var(--section-padding-desktop);
+  }
+}
+
+/* Ajustements pour les interactions tactiles */
+@media (max-width: 768px) {
+  /* Améliorer la zone de clic pour les boutons sur mobile */
+  button,
+  a {
+    padding: 0.75rem 1.5rem;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Désactiver certains effets de survol qui n'ont pas de sens sur mobile */
+  .hover-effect {
+    transition: none;
+  }
+}
+
+/* Ajustements d'espacement pour petits écrans */
+@media (max-width: 640px) {
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Optimisations pour les appareils à faible bande passante */
+@media (prefers-reduced-data: reduce) {
+  .background-video,
+  .high-res-image {
+    display: none;
+  }
+
+  .low-res-fallback {
+    display: block;
+  }
+}
+
+/* Optimisations pour la préférence de réduction de mouvement */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-fadeIn,
+  .animate-pulse {
+    animation: none !important;
+    transition: none !important;
+  }
+}
