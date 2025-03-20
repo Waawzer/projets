@@ -104,7 +104,7 @@ const Hero = () => {
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex items-center justify-center relative overflow-hidden"
+      className="w-full h-screen flex items-center justify-center relative overflow-hidden"
     >
       {/* Arrière-plan avec effet de parallaxe */}
       <motion.div

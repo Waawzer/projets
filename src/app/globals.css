@@ -11,6 +11,8 @@
   --card-bg: rgba(23, 23, 23, 0.8);
   --card-hover-bg: rgba(32, 32, 32, 0.9);
   --scroll-behavior: smooth;
+  --transition-duration: 1000ms;
+  --transition-timing: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 @theme inline {
@@ -86,7 +88,7 @@ h6 {
   transform: translateY(-5px);
 }
 
-/* Styles pour le fullpage scroll */
+/* Styles pour le fullpage scroll avec animation fluide */
 .fullpage-container {
   width: 100%;
   height: 100vh;
@@ -101,18 +103,22 @@ h6 {
 .fullpage-sections {
   position: relative;
   width: 100%;
-  height: 100%;
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-duration) var(--transition-timing);
+  will-change: transform;
 }
 
 .fullpage-section {
-  height: 100vh;
+  height: 100vh; /* Chaque section a une hauteur de 100vh */
+  min-height: 100vh;
   width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
+  flex-shrink: 0;
   overflow: hidden;
-  transition: opacity 0.8s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Styles pour les points de navigation */

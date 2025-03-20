@@ -13,19 +13,47 @@ import NavDots from "./components/NavDots";
 export default function Home() {
   const [activeSection, setActiveSection] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const sectionsRef = useRef<HTMLDivElement>(null);
   const isScrolling = useRef(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const totalSections = 5;
 
-  const handleSectionChange = (index: number) => {
+  // Détecter les appareils mobiles
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Vérifier au chargement
+    checkMobile();
+
+    // Réagir au redimensionnement
+    window.addEventListener("resize", checkMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
+
+  // Fonction pour faire défiler vers une section avec une animation fluide
+  const scrollToSection = (index: number) => {
     if (isScrolling.current) return;
 
     isScrolling.current = true;
     setActiveSection(index);
 
-    setTimeout(() => {
-      isScrolling.current = false;
-    }, 800); // Durée de l'animation
+    // Appliquer la transformation pour défiler vers la section
+    if (sectionsRef.current) {
+      sectionsRef.current.style.transform = `translateY(-${index * 100}vh)`;
+    }
+
+    setTimeout(
+      () => {
+        isScrolling.current = false;
+      },
+      isMobile ? 800 : 1000
+    ); // Durée de l'animation (doit correspondre à la durée dans CSS)
   };
 
   // Gestion du scroll avec la molette
@@ -42,7 +70,7 @@ export default function Home() {
       );
 
       if (newSection !== activeSection) {
-        handleSectionChange(newSection);
+        scrollToSection(newSection);
       }
     };
 
@@ -67,13 +95,13 @@ export default function Home() {
         e.preventDefault();
         const newSection = Math.min(activeSection + 1, totalSections - 1);
         if (newSection !== activeSection) {
-          handleSectionChange(newSection);
+          scrollToSection(newSection);
         }
       } else if (e.key === "ArrowUp" || e.key === "PageUp") {
         e.preventDefault();
         const newSection = Math.max(activeSection - 1, 0);
         if (newSection !== activeSection) {
-          handleSectionChange(newSection);
+          scrollToSection(newSection);
         }
       }
     };
@@ -91,14 +119,14 @@ export default function Home() {
       if (isScrolling.current) return;
       const newSection = Math.min(activeSection + 1, totalSections - 1);
       if (newSection !== activeSection) {
-        handleSectionChange(newSection);
+        scrollToSection(newSection);
       }
     },
     onSwipedDown: () => {
       if (isScrolling.current) return;
       const newSection = Math.max(activeSection - 1, 0);
       if (newSection !== activeSection) {
-        handleSectionChange(newSection);
+        scrollToSection(newSection);
       }
     },
     trackTouch: true,
@@ -120,54 +148,28 @@ export default function Home() {
       <NavDots
         total={totalSections}
         active={activeSection}
-        onDotClick={handleSectionChange}
+        onDotClick={scrollToSection}
       />
 
       <div ref={setRefs} className="fullpage-container">
-        <div className="fullpage-sections">
-          <div
-            className="fullpage-section bg-black"
-            style={{
-              zIndex: activeSection === 0 ? 5 : 1,
-              opacity: activeSection === 0 ? 1 : 0,
-            }}
-          >
+        <div
+          ref={sectionsRef}
+          className="fullpage-sections"
+          style={{ transform: `translateY(-${activeSection * 100}vh)` }}
+        >
+          <div className="fullpage-section bg-black">
             <Hero />
           </div>
-          <div
-            className="fullpage-section bg-black"
-            style={{
-              zIndex: activeSection === 1 ? 5 : 1,
-              opacity: activeSection === 1 ? 1 : 0,
-            }}
-          >
+          <div className="fullpage-section bg-black">
             <ServicesSection />
           </div>
-          <div
-            className="fullpage-section bg-black"
-            style={{
-              zIndex: activeSection === 2 ? 5 : 1,
-              opacity: activeSection === 2 ? 1 : 0,
-            }}
-          >
+          <div className="fullpage-section bg-black">
             <ModelsSection />
           </div>
-          <div
-            className="fullpage-section bg-black"
-            style={{
-              zIndex: activeSection === 3 ? 5 : 1,
-              opacity: activeSection === 3 ? 1 : 0,
-            }}
-          >
+          <div className="fullpage-section bg-black">
             <WhyUsSection />
           </div>
-          <div
-            className="fullpage-section bg-black"
-            style={{
-              zIndex: activeSection === 4 ? 5 : 1,
-              opacity: activeSection === 4 ? 1 : 0,
-            }}
-          >
+          <div className="fullpage-section bg-black">
             <Footer />
           </div>
         </div>
