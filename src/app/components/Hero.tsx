@@ -11,6 +11,16 @@ import {
 } from "framer-motion";
 import Link from "next/link";
 
+// Interface pour définir la structure des particules
+interface Particle {
+  id: number;
+  size: number;
+  x: number;
+  y: number;
+  opacity: number;
+  speed: number;
+}
+
 const Hero = () => {
   const containerRef = useRef(null);
   const mouseX = useMotionValue(0);
@@ -24,6 +34,8 @@ const Hero = () => {
     "A prix abordable",
   ];
   const [isMounted, setIsMounted] = useState(false);
+  // Nouvel état pour stocker les particules, correctement typé
+  const [particles, setParticles] = useState<Particle[]>([]);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -40,17 +52,6 @@ const Hero = () => {
   const springConfig = { stiffness: 100, damping: 30 };
   const springY = useSpring(y, springConfig);
   const springOpacity = useSpring(opacity, springConfig);
-
-  // Animation des particules pour effet "Apple"
-  const particleCount = isMobile ? 15 : 30;
-  const particles = Array.from({ length: particleCount }).map((_, i) => ({
-    id: i,
-    size: Math.random() * 3 + 1,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    opacity: Math.random() * 0.5 + 0.1,
-    speed: Math.random() * 0.8 + 0.2,
-  }));
 
   // Détecter les appareils mobiles
   useEffect(() => {
@@ -69,10 +70,25 @@ const Hero = () => {
     };
   }, []);
 
-  // Set isMounted to true on client-side
+  // Set isMounted to true on client-side and generate particles
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+
+    // Générer les particules seulement côté client
+    const particleCount = isMobile ? 15 : 30;
+    const newParticles: Particle[] = Array.from({ length: particleCount }).map(
+      (_, i) => ({
+        id: i,
+        size: Math.random() * 3 + 1,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        opacity: Math.random() * 0.5 + 0.1,
+        speed: Math.random() * 0.8 + 0.2,
+      })
+    );
+
+    setParticles(newParticles);
+  }, [isMobile]);
 
   useEffect(() => {
     if (!isMounted) return;
@@ -129,32 +145,33 @@ const Hero = () => {
         }}
       />
 
-      {/* Particules flottantes style Apple */}
-      {particles.map((particle) => (
-        <motion.div
-          key={particle.id}
-          className="absolute rounded-full bg-white"
-          style={{
-            width: particle.size,
-            height: particle.size,
-            left: `${particle.x}%`,
-            top: `${particle.y}%`,
-            opacity: particle.opacity,
-            zIndex: 1,
-            filter: "blur(1px)",
-          }}
-          animate={{
-            y: [0, -100 * particle.speed],
-            opacity: [particle.opacity, 0],
-          }}
-          transition={{
-            duration: 10 + Math.random() * 20,
-            repeat: Infinity,
-            ease: "linear",
-            delay: Math.random() * 5,
-          }}
-        />
-      ))}
+      {/* Particules flottantes style Apple - rendu seulement après montage */}
+      {isMounted &&
+        particles.map((particle) => (
+          <motion.div
+            key={particle.id}
+            className="absolute rounded-full bg-white"
+            style={{
+              width: particle.size,
+              height: particle.size,
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              opacity: particle.opacity,
+              zIndex: 1,
+              filter: "blur(1px)",
+            }}
+            animate={{
+              y: [0, -100 * particle.speed],
+              opacity: [particle.opacity, 0],
+            }}
+            transition={{
+              duration: 10 + Math.random() * 20,
+              repeat: Infinity,
+              ease: "linear",
+              delay: Math.random() * 5,
+            }}
+          />
+        ))}
 
       {/* Formes flottantes - réduire la taille sur mobile */}
       <motion.div

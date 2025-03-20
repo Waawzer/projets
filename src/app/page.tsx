@@ -45,7 +45,9 @@ export default function Home() {
 
     // Appliquer la transformation pour défiler vers la section
     if (sectionsRef.current) {
-      sectionsRef.current.style.transform = `translateY(-${index * 100}vh)`;
+      // Calculer le pourcentage de défilement en fonction du nombre de sections
+      const scrollPercentage = index * (100 / totalSections);
+      sectionsRef.current.style.transform = `translateY(-${scrollPercentage}%)`;
     }
 
     setTimeout(
@@ -155,7 +157,9 @@ export default function Home() {
         <div
           ref={sectionsRef}
           className="fullpage-sections"
-          style={{ transform: `translateY(-${activeSection * 100}vh)` }}
+          style={{
+            transform: `translateY(-${activeSection * (100 / totalSections)}%)`,
+          }}
         >
           <div className="fullpage-section bg-black">
             <Hero />

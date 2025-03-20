@@ -103,18 +103,15 @@ h6 {
 .fullpage-sections {
   position: relative;
   width: 100%;
-  display: flex;
-  flex-direction: column;
+  height: 500%; /* 5 sections × 100% */
   transition: transform var(--transition-duration) var(--transition-timing);
   will-change: transform;
 }
 
 .fullpage-section {
   height: 100vh; /* Chaque section a une hauteur de 100vh */
-  min-height: 100vh;
   width: 100%;
   position: relative;
-  flex-shrink: 0;
   overflow: hidden;
   display: flex;
   align-items: center;
